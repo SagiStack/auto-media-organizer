@@ -1,0 +1,97 @@
+categories:
+  Audio:
+    extensions:
+    - .mp3
+    - .wav
+    - .flac
+    - .m4a
+    renaming: '{artist} - {title}'
+    structure: '{artist}/{album}'
+    subcategories: {}
+  Documents:
+    extensions:
+    - .pdf
+    - .docx
+    - .txt
+    - .xlsx
+    - .pptx
+    - .csv
+    - .md
+    renaming: null
+    structure: '{subcategory}/{year}'
+    subcategories:
+      Archives:
+      - backup
+      - archive
+      - dump
+      - old
+      Finance:
+      - invoice
+      - bill
+      - bank
+      - receipt
+      - payment
+      - tax
+      - crypto
+      - salary
+      - pay
+      Personal:
+      - letter
+      - diary
+      - journal
+      - note
+      Work:
+      - project
+      - plan
+      - meeting
+      - presentation
+      - report
+      - contract
+  Images:
+    extensions:
+    - .jpg
+    - .jpeg
+    - .png
+    - .webp
+    - .heic
+    renaming: null
+    structure: '{year}/{month}'
+    subcategories:
+      Screenshots:
+      - screenshot
+      - scrn
+      - capture
+  Logs:
+    extensions:
+    - .log
+    renaming: null
+    structure: SystemLogs/{year}
+    subcategories: {}
+  Videos:
+    extensions:
+    - .mp4
+    - .mov
+    - .mkv
+    - .avi
+    renaming: null
+    structure: '{year}'
+    subcategories: {}
+performance:
+  max_workers: 5
+  use_multiprocessing: true
+scanner:
+  exclude_dirs:
+  - .git
+  - __pycache__
+  - .venv
+  - .uv
+  - node_modules
+  - .gemini
+  - venv
+  include_hidden: false
+settings:
+  duplicate_folder: Duplicates
+  enable_renaming: true
+  naming_convention: '{date}_{filename}{extension}'
+  recursive_undo_cleanup: true
+  title_case: true

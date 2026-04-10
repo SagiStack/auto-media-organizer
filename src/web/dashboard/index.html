@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auto-Organizer Command Center</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="app-layout">
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar">
+        <div class="logo">
+          <i class="bi bi-robot"></i>
+          <span>Auto-Clean</span>
+        </div>
+        <nav>
+          <button class="nav-btn active" data-tab="dashboard">
+            <i class="bi bi-speedometer2"></i> Dashboard
+          </button>
+          <button class="nav-btn" data-tab="control">
+            <i class="bi bi-terminal"></i> Control Center
+          </button>
+          <button class="nav-btn" data-tab="library">
+            <i class="bi bi-collection-play"></i> Library
+          </button>
+          <button class="nav-btn" data-tab="duplicates">
+            <i class="bi bi-files-alternate"></i> Duplicates
+          </button>
+          <button class="nav-btn" data-tab="settings">
+            <i class="bi bi-gear"></i> Settings
+          </button>
+        </nav>
+        <div class="sidebar-footer">
+          <div id="status-badge" class="badge-online">
+            <span class="dot"></span> Online
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="main-content">
+        <!-- Dashboard Tab -->
+        <section id="tab-dashboard" class="tab-pane active">
+          <header class="tab-header">
+            <div>
+              <h1>System Overview</h1>
+              <p class="subtitle">Real-time health of your media library</p>
+            </div>
+            <div class="header-actions">
+              <div id="service-control" class="glass-card service-status">
+                <div class="service-info">
+                  <span class="dim">Auto-Watch</span>
+                  <span id="service-state" class="state-off">OFF</span>
+                </div>
+                <button class="toggle-btn" id="btn-toggle-service">
+                  <div class="toggle-slider"></div>
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <div class="stats-grid">
+            <div class="glass-card stat-item">
+              <span class="stat-label">Organized Items</span>
+              <span class="stat-value" id="count-files">0</span>
+            </div>
+            <div class="glass-card stat-item">
+              <span class="stat-label">Data Managed</span>
+              <span class="stat-value" id="count-size">0.00 GB</span>
+            </div>
+            <div class="glass-card stat-item">
+              <span class="stat-label">Active Sessions</span>
+              <span class="stat-value" id="count-sessions">0</span>
+            </div>
+            <div class="glass-card engine-card">
+              <div class="engine-header">
+                <span class="stat-label">Engine Power</span>
+                <span id="engine-mode" class="mode-badge mode-standard">Standard</span>
+              </div>
+              <div class="engine-controls">
+                <input type="range" id="dash-worker-slider" min="1" max="16" value="4" class="throttle-slider">
+                <div class="engine-meta">
+                  <span id="engine-threads">4 Workers</span>
+                  <span class="dim" id="engine-cores">/ 8 Cores</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="charts-grid">
+            <div class="glass-card chart-card">
+              <h3>Category Mapping</h3>
+              <div class="chart-container">
+                <canvas id="distributionChart"></canvas>
+              </div>
+            </div>
+            <div class="glass-card recent-card">
+              <h3>Recent Sessions</h3>
+              <div class="session-list" id="session-container">
+                <!-- Grouped sessions injected here -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Control Tab -->
+        <section id="tab-control" class="tab-pane">
+          <header class="tab-header">
+            <div>
+              <h1>Control Center</h1>
+              <p class="subtitle">Manual cleanup and live monitoring</p>
+            </div>
+          </header>
+
+          <div class="control-grid">
+            <div class="glass-card action-panel">
+              <h3>Manual Task</h3>
+              <div class="form-group">
+                <label>Source Folder</label>
+                <div class="path-input-group">
+                  <input type="text" id="input-source" placeholder="C:\Users\Downloads" value="test_lab">
+                  <div class="quick-paths">
+                    <button class="path-chip" data-path="downloads" title="Downloads"><i class="bi bi-download"></i></button>
+                    <button class="path-chip" data-path="pictures" title="Pictures"><i class="bi bi-image"></i></button>
+                    <button class="path-chip" data-path="desktop" title="Desktop"><i class="bi bi-display"></i></button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Target Folder</label>
+                <input type="text" id="input-target" placeholder="D:\Organized">
+              </div>
+              <div class="btn-group">
+                <button class="btn btn-outline" id="btn-analyze">Deep Scan</button>
+                <button class="btn btn-primary" id="btn-organize">Run Organizer</button>
+              </div>
+            </div>
+
+            <div class="glass-card terminal-card">
+              <div class="terminal-header">
+                <h3>System Log</h3>
+                <div class="progress-info" id="progress-container" style="display: none;">
+                  <span id="progress-text">Processing...</span>
+                  <div class="progress-bar-bg">
+                    <div id="progress-bar-fill" class="progress-bar-fill"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="terminal-body" id="terminal-feed">
+                <div class="log-entry sys">Waiting for instruction...</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Library Tab -->
+        <section id="tab-library" class="tab-pane">
+          <header class="tab-header">
+            <div>
+              <h1>Media Library</h1>
+              <p class="subtitle">Visual catalog of your organized files</p>
+            </div>
+            <div class="header-actions">
+              <select id="library-filter" class="styled-select">
+                <option value="">All Categories</option>
+                <option value="Images">Images</option>
+                <option value="Videos">Videos</option>
+                <option value="Audio">Audio</option>
+              </select>
+            </div>
+          </header>
+          
+          <div id="library-grid" class="library-grid">
+            <div class="empty-state">
+              <i class="bi bi-images"></i>
+              <p>Your library is empty. Organize some files to see them here!</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Duplicates Tab -->
+        <section id="tab-duplicates" class="tab-pane">
+          <header class="tab-header">
+            <div>
+              <h1>Duplicate Resolver</h1>
+              <p class="subtitle">Intelligent detection and cleanup of redundant files</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn btn-secondary" id="btn-refresh-duplicates">Refresh Scan</button>
+            </div>
+          </header>
+
+          <div id="duplicates-container" class="duplicates-list">
+            <div class="empty-state">
+              <i class="bi bi-check-circle"></i>
+              <p>No duplicates found! Your library is clean.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Settings Tab -->
+        <section id="tab-settings" class="tab-pane">
+          <header class="tab-header">
+            <div>
+              <h1>Settings</h1>
+              <p class="subtitle">Tune rules and resource allocation</p>
+            </div>
+            <div class="header-actions">
+              <button class="btn btn-primary" id="btn-save-config">Save All</button>
+            </div>
+          </header>
+
+          <div class="settings-layout">
+            <div class="glass-card settings-nav">
+              <button class="set-nav-btn active" data-set="general">General</button>
+              <button class="set-nav-btn" data-set="performance">Performance</button>
+              <button class="set-nav-btn" data-set="advanced">Raw YAML</button>
+            </div>
+            
+            <div class="glass-card settings-form">
+              <div id="set-pane-general" class="set-pane active">
+                <h3>Cleanup Rules</h3>
+                <!-- Dynamic categories form here -->
+                <div id="categories-form"></div>
+              </div>
+
+              <div id="set-pane-performance" class="set-pane">
+                <h3>Resource Management</h3>
+                <div class="form-group">
+                  <label>Max Worker Threads (<span id="val-workers">4</span>)</label>
+                  <input type="range" id="input-workers" min="1" max="32" value="4">
+                </div>
+                <div class="form-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="input-mp"> Use Multiprocessing (Better for large files)
+                  </label>
+                </div>
+              </div>
+
+              <div id="set-pane-advanced" class="set-pane">
+                <h3>Advanced YAML</h3>
+                <div class="editor-wrap">
+                  <textarea id="config-textarea" spellcheck="false"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

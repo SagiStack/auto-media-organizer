@@ -1,0 +1,25 @@
+[project]
+name = "auto-media-organizer"
+version = "0.1.0"
+description = "Professional-grade autonomous media organization and deduplication suite."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "typer",
+    "rich",
+    "pyyaml",
+    "watchdog",
+    "pillow",
+    "exifread",
+    "mutagen",
+    "python-magic-bin; sys_platform == 'win32'",
+    "python-magic; sys_platform != 'win32'",
+]
+
+[project.scripts]
+organizer = "src.cli.main:app"
+
+[tool.uv]
+managed = true
