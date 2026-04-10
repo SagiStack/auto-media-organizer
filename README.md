@@ -4,7 +4,7 @@
 
 Auto-Media-Organizer is an autonomous command center for your digital life. It doesn't just move files; it **inspects**, **hashes**, **labels**, and **curates** your media using deep metadata awareness and high-speed multi-threading.
 
-![Dashboard Preview](https://placehold.co/1200x600?text=Auto-Organizer+Command+Center+Preview)
+![Dashboard Preview](assets/dashboard_hero.png)
 
 ## 🌟 Key Features
 
